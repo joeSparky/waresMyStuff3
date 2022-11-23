@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE params SYSTEM "commonParams.dtd">
+<params>
+<loginForm>com.sessionVars.LoginForm</loginForm>
+<dispatchForm>com.sessionVars.DispatchForm</dispatchForm>
+<dbName>commonDB</dbName>
+<dbAccount>dbAccount</dbAccount>
+<dbPassword>dbPassword</dbPassword>
+</params>

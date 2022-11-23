@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE params [
+<!ELEMENT params (
+loginForm,
+dispatchForm,
+dbAccount,
+dbPassword,
+dUserName,
+dPassword,
+dCompany,
+dcsvPath, 
+dbName)>
+<!ELEMENT loginForm    (#PCDATA)>
+<!ELEMENT dispatchForm (#PCDATA)>
+<!ELEMENT dbAccount    (#PCDATA)>
+<!ELEMENT dbPassword   (#PCDATA)>
+<!ELEMENT dUserName    (#PCDATA)>
+<!ELEMENT dPassword    (#PCDATA)>
+<!ELEMENT dCompany     (#PCDATA)>
+<!ELEMENT dcsvPath     (#PCDATA)>
+<!ELEMENT dbName       (#PCDATA)>
+]>
+
+<params>
+	<loginForm>comTest.sessionVars.LoginForm</loginForm>
+	<dispatchForm>comTest.sessionVars.DispatchForm</dispatchForm>
+	<dbAccount>testUser</dbAccount>	
+	<dbPassword>testPassword</dbPassword>
+	<dUserName>ferSure</dUserName>
+	<dPassword>ferSure</dPassword>
+	<dCompany>commonCompany</dCompany>
+	<dcsvPath>c:\dumpCsv</dcsvPath>
+	<dbName>testDb</dbName>
+</params>

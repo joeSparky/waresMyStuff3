@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT params (loginForm, dispatchForm, dbName, dbAccount, dbPassword, dUserName, dPassword, dCompany, csvPath)>
+<!ELEMENT loginForm (#PCDATA)>
+<!ELEMENT dispatchForm (#PCDATA)>
+<!ELEMENT dbName (#PCDATA)>
+<!ELEMENT dbAccount (#PCDATA)>
+<!ELEMENT dbPassword (#PCDATA)>
+<!ELEMENT dUserName (#PCDATA)>
+<!ELEMENT dPassword (#PCDATA)>
+<!ELEMENT dCompany (#PCDATA)>
+<!ELEMENT csvPath (#PCDATA)>

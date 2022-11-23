@@ -1,0 +1,20 @@
+@CHARSET "ISO-8859-1";
+
+.overlay {
+	clear: left;	
+}
+
+.tab {
+	width: auto;
+	border: solid 1px #c0c0c0;
+	float: left;
+	padding: 5px;
+	cursor:crosshair;
+}
+.looseButton {
+	clear:left;
+	position: relative;
+}
+.newLine {
+	clear:both;
+}

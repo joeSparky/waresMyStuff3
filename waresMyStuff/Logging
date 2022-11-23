@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2022-11-23T02:08:55.955309459Z</date>
+  <millis>1669169335955</millis>
+  <nanos>309459</nanos>
+  <sequence>0</sequence>
+  <logger>comTest.logging.Logging</logger>
+  <level>WARNING</level>
+  <class>comTest.logging.Logging</class>
+  <method>test</method>
+  <thread>1</thread>
+  <message>a warning message</message>
+</record>
+</log>

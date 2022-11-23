@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE params [
+<!ELEMENT params (
+loginForm, dispatchForm, dbName, dbAccount, dbPassword, dUserName, dPassword,dCompany,
+csvPath)>
+<!ELEMENT loginForm (#PCDATA)>
+<!ELEMENT dispatchForm (#PCDATA)>
+<!ELEMENT dbName (#PCDATA)>
+<!ELEMENT dbAccount (#PCDATA)>
+<!ELEMENT dbPassword (#PCDATA)>
+<!ELEMENT dUserName (#PCDATA)>
+<!ELEMENT dPassword (#PCDATA)>
+<!ELEMENT dCompany (#PCDATA)>
+<!ELEMENT csvPath (#PCDATA)>
+
+]>
+<params>
+	<loginForm>com.parts.security.Login</loginForm>
+	<dispatchForm>com.parts.security.Dispatch</dispatchForm>
+	<dbName>shop</dbName>
+	<dbAccount>root</dbAccount>
+	<dbPassword>y2schaum</dbPassword>
+	<dUserName>ferSure</dUserName>
+	<dPassword>ferSure</dPassword>
+	<dCompany>commonCompany</dCompany>
+	<csvPath>c:\dumpCsv</csvPath>
+</params>
