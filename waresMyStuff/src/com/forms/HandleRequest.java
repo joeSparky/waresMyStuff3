@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.db.SessionVars;
 import com.errorLogging.Internals;
@@ -22,7 +23,11 @@ public class HandleRequest extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private SessionVars sVars = null;
 	static final String SESSIONATTRIBUTE = "sessionVariables";
-//	protected static XML xml = null;
+	SmartForm login = null;
+	/**
+	 * the first time HttpServlet has run
+	 */
+	boolean firstTime = true;
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -36,37 +41,45 @@ public class HandleRequest extends HttpServlet {
 		doBoth(request, response);
 	}
 
-	// static boolean loggingChecked = false;
+	HttpSession session = null;
 
 	protected void doBoth(HttpServletRequest request, HttpServletResponse response) {
+
 		response.setContentType("text/html");
 
-//		if (1 != 2) {
-//			Internals.logStartupError("from the top of doBoth");
-//			Internals.logStartupError(new Exception("as an exception"));
-//			bestOutputEffort(response);
-//			return;
-//		}
+		// if this is a new session
+		if (request.getSession(false) == null) {
+			session = request.getSession(true);
+			try {
+				sVars = new SessionVars(getServletContext());
+			} catch (Exception e) {
+				Internals.logStartupError(e);
+			}
+			// let sVars persist in the session
+			session.setAttribute(SESSIONATTRIBUTE, sVars);
+		}
 
-		boolean newSession = false;
-		try {
-			sVars = new SessionVars(getServletContext());
-		} catch (Exception e) {
-			bestOutputEffort(response, e);
-			return;
-		}
-		// if the session timed out or never existed
-		if (request.getSession(true).getAttribute(SESSIONATTRIBUTE) == null) {
-			// create a new SessionVars in the session
-			request.getSession().setAttribute(SESSIONATTRIBUTE, sVars);
-			newSession = true;
-		}
-		sVars = (SessionVars) request.getSession().getAttribute(SESSIONATTRIBUTE);
+		// get sVars from the session
+		sVars = (SessionVars) session.getAttribute(SESSIONATTRIBUTE);
 		sVars.request = request;
 		sVars.response = response;
-//		sVars.context = getServletContext();
 
-		//new FormToRun().whichForm(sVars, newSession);
+		if (firstTime) {
+			firstTime = false;
+			try {
+				// checks xml file available, use the test to initialize the login form
+				login = sVars.getLoginForm();
+				// checks access to the database
+				sVars.connection.getConnection();
+			} catch (Exception e) {
+				Internals.logStartupError(e);
+			}
+
+		}
+
+		// if tVars.context = getServletContext();
+
+		// new FormToRun().whichForm(sVars, newSession);
 
 //		if (sVars.ret == null) {
 //			sVars.ret = new FormsArray();
@@ -91,27 +104,27 @@ public class HandleRequest extends HttpServlet {
 //			sVars.ret.errorToUser(Internals.getStartupError());
 
 //		XML xml = null;
-		SmartForm login = null;
+//		SmartForm login = null;
 		// get the form associated with the input or null
 		SmartForm sf = sVars.getApToRun();
 
-		Exception ex = null;
-		try {
-//			xml = 
-			// let parts override
-			login = sVars.getLoginForm();
-//			login = xml.getLogin(null, sVars);
-		} catch (Exception e) {
-			// save the exception for later
-			ex = e;
-		}
-		if (ex != null) {
-			// we can't run
-			// bestOutputEffort(login, ex);
-			bestOutputEffort(response);
-			sVars.threadCount--;
-			return;
-		}
+//		Exception ex = null;
+//		try {
+////			xml = 
+//			// let parts override
+//			login = sVars.getLoginForm();
+////			login = xml.getLogin(null, sVars);
+//		} catch (Exception e) {
+//			// save the exception for later
+//			ex = e;
+//		}
+//		if (ex != null) {
+//			// we can't run
+//			// bestOutputEffort(login, ex);
+//			bestOutputEffort(response);
+//			sVars.threadCount--;
+//			return;
+//		}
 
 		// if the user is not logged in or the input did not have an id for the
 		// application to run
@@ -174,15 +187,16 @@ public class HandleRequest extends HttpServlet {
 		} catch (Exception e) {
 			ret.errorToUser(e);
 		}
+//		ret.errorToUser("inCount:" + inCount + " outCount:" + outCount);
 
 		ret.executeForm(sVars, sVars.request, sVars.response, sVars.context);
 	}
-	
-	private void bestOutputEffort (HttpServletResponse response) {
+
+	private void bestOutputEffort(HttpServletResponse response) {
 		bestOutputEffort(response, "");
 	}
-	
-	private void bestOutputEffort (HttpServletResponse response, Exception e) {
+
+	private void bestOutputEffort(HttpServletResponse response, Exception e) {
 		Internals.logStartupError(e);
 		bestOutputEffort(response, "");
 	}
@@ -194,6 +208,7 @@ public class HandleRequest extends HttpServlet {
 		// get the error passed to us
 		if (!errorString.isEmpty())
 			ret.errorToUser(errorString);
+//		ret.errorToUser("inCount:" + inCount + " outCount:" + outCount);
 		PrintWriter out = null;
 		try {
 			out = response.getWriter();
