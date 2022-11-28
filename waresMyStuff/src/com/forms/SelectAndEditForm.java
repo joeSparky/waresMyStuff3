@@ -301,7 +301,7 @@ public class SelectAndEditForm extends SmartForm {
 		try {
 			ret.addAll(extractParams(sVars));
 			returnedWithoutException = true;
-			ret.errorToUser("input not found");
+			//ret.errorToUser("input not found");
 		} catch (EndOfInputException e) {
 			// normal end of input processing
 			retSoFar = new FormsArray();

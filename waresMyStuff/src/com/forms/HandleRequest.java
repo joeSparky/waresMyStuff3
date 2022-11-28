@@ -21,9 +21,7 @@ import com.errorLogging.Internals;
  */
 public class HandleRequest extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private SessionVars sVars = null;
 	static final String SESSIONATTRIBUTE = "sessionVariables";
-	SmartForm login = null;
 	/**
 	 * the first time HttpServlet has run
 	 */
@@ -44,8 +42,9 @@ public class HandleRequest extends HttpServlet {
 	HttpSession session = null;
 
 	protected void doBoth(HttpServletRequest request, HttpServletResponse response) {
-
+		SessionVars sVars = null;
 		response.setContentType("text/html");
+		SmartForm login = null;
 
 		// if this is a new session
 		if (request.getSession(false) == null) {
@@ -57,7 +56,8 @@ public class HandleRequest extends HttpServlet {
 			}
 			// let sVars persist in the session
 			session.setAttribute(SESSIONATTRIBUTE, sVars);
-		}
+		} else
+			session = request.getSession(true);
 
 		// get sVars from the session
 		sVars = (SessionVars) session.getAttribute(SESSIONATTRIBUTE);
@@ -129,7 +129,7 @@ public class HandleRequest extends HttpServlet {
 		// if the user is not logged in or the input did not have an id for the
 		// application to run
 		if (!sVars.isLoggedIn() || sf == null) {
-			processInput(login);
+			processInput(login, sVars);
 			sVars.threadCount--;
 			return;
 
@@ -153,23 +153,23 @@ public class HandleRequest extends HttpServlet {
 //		}
 //		Internals.logWithDate();
 
-		processInput(sf);
+		processInput(sf, sVars);
 		sVars.threadCount--;
 	}
 
-	@SuppressWarnings("unused")
-	private void backToLogin(FormsArray ret, SmartForm login) {
-		// go back to the login screen
-		try {
-			ret.addAll(login.getForm(sVars));
-		} catch (Exception e) {
-			ret.errorToUser(e);
-		}
-		ret.executeForm(sVars, sVars.request, sVars.response, sVars.context);
-		return;
-	}
+//	@SuppressWarnings("unused")
+//	private void backToLogin(FormsArray ret, SmartForm login) {
+//		// go back to the login screen
+//		try {
+//			ret.addAll(login.getForm(sVars));
+//		} catch (Exception e) {
+//			ret.errorToUser(e);
+//		}
+//		ret.executeForm(sVars, sVars.request, sVars.response, sVars.context);
+//		return;
+//	}
 
-	private void processInput(SmartForm thisOne) {
+	private void processInput(SmartForm thisOne, SessionVars sVars) {
 		FormsArray ret = new FormsArray();
 		if (thisOne == null)
 			ret.errorToUser(Internals.dumpExceptionToString(new Exception("null thisOne")));
@@ -192,60 +192,60 @@ public class HandleRequest extends HttpServlet {
 		ret.executeForm(sVars, sVars.request, sVars.response, sVars.context);
 	}
 
-	private void bestOutputEffort(HttpServletResponse response) {
-		bestOutputEffort(response, "");
-	}
-
-	private void bestOutputEffort(HttpServletResponse response, Exception e) {
-		Internals.logStartupError(e);
-		bestOutputEffort(response, "");
-	}
-
-	private void bestOutputEffort(HttpServletResponse response, String errorString) {
-		FormsArray ret = new FormsArray();
-		// get startup errors
-		ret.errorToUser(Internals.getStartupError());
-		// get the error passed to us
-		if (!errorString.isEmpty())
-			ret.errorToUser(errorString);
-//		ret.errorToUser("inCount:" + inCount + " outCount:" + outCount);
-		PrintWriter out = null;
-		try {
-			out = response.getWriter();
-		} catch (IOException e) {
-			// try to dump the exception the next time we run
-			Internals.logStartupError(e);
-		}
-		out.print(ret.generateHTML());
-		out.flush();
-
-//		try {
-//			blankForm = new BlankForm(new FormsMatrixDynamic(sVars), sVars);
-//			blankForm.setErrorToUser(e);
-//			blankForm.processButtons(sVars);
-//			FormsArray ret = new FormsArray();
-//			ret.addAll(blankForm.processButtons(sVars));
-//			if (Internals.startupError())
-//				ret.errorToUser(Internals.getStartupError());
-//			ret.executeForm(sVars, sVars.request, sVars.response, sVars.context);
-//		} catch (Exception e1) {
-//			// we can't get to the user. try dumping the failure to the log.
-//			Internals.logStartupError(e1);
-//		}
-	}
-
-//	private void failedForm(Exception callerException) {
-//		Internals.dumpExceptionContinue(callerException);
-//		sVars.request.getSession().invalidate();
-//		RequestDispatcher dispatcher = sVars.context.getRequestDispatcher("/index.html");
-//		try {
-//			dispatcher.forward(sVars.request, sVars.response);
-//		} catch (ServletException e) {
-//			Internals.dumpExceptionExit(e);
-//		} catch (IOException e) {
-//			Internals.dumpExceptionExit(e);
-//		}
+//	private void bestOutputEffort(HttpServletResponse response) {
+//		bestOutputEffort(response, "");
 //	}
+//
+//	private void bestOutputEffort(HttpServletResponse response, Exception e) {
+//		Internals.logStartupError(e);
+//		bestOutputEffort(response, "");
+//	}
+
+//	private void bestOutputEffort(HttpServletResponse response, String errorString) {
+//		FormsArray ret = new FormsArray();
+//		// get startup errors
+//		ret.errorToUser(Internals.getStartupError());
+//		// get the error passed to us
+//		if (!errorString.isEmpty())
+//			ret.errorToUser(errorString);
+////		ret.errorToUser("inCount:" + inCount + " outCount:" + outCount);
+//		PrintWriter out = null;
+//		try {
+//			out = response.getWriter();
+//		} catch (IOException e) {
+//			// try to dump the exception the next time we run
+//			Internals.logStartupError(e);
+//		}
+//		out.print(ret.generateHTML());
+//		out.flush();
+//
+////		try {
+////			blankForm = new BlankForm(new FormsMatrixDynamic(sVars), sVars);
+////			blankForm.setErrorToUser(e);
+////			blankForm.processButtons(sVars);
+////			FormsArray ret = new FormsArray();
+////			ret.addAll(blankForm.processButtons(sVars));
+////			if (Internals.startupError())
+////				ret.errorToUser(Internals.getStartupError());
+////			ret.executeForm(sVars, sVars.request, sVars.response, sVars.context);
+////		} catch (Exception e1) {
+////			// we can't get to the user. try dumping the failure to the log.
+////			Internals.logStartupError(e1);
+////		}
+//	}
+//
+////	private void failedForm(Exception callerException) {
+////		Internals.dumpExceptionContinue(callerException);
+////		sVars.request.getSession().invalidate();
+////		RequestDispatcher dispatcher = sVars.context.getRequestDispatcher("/index.html");
+////		try {
+////			dispatcher.forward(sVars.request, sVars.response);
+////		} catch (ServletException e) {
+////			Internals.dumpExceptionExit(e);
+////		} catch (IOException e) {
+////			Internals.dumpExceptionExit(e);
+////		}
+////	}
 
 	public static void backToLogin(SessionVars sVars) throws ServletException, IOException {
 		sVars.request.getSession().invalidate();
