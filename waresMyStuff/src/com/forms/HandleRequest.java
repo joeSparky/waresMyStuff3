@@ -39,28 +39,34 @@ public class HandleRequest extends HttpServlet {
 		doBoth(request, response);
 	}
 
-	HttpSession session = null;
-
 	protected void doBoth(HttpServletRequest request, HttpServletResponse response) {
 		SessionVars sVars = null;
 		response.setContentType("text/html");
-		SmartForm login = null;
+		HttpSession session = null;
+		/**
+		 * if the server restarts during a session, the session remains up after the
+		 * restart. However, sVars is returned as null in the getAttribute.
+		 */
 
-		// if this is a new session
-		if (request.getSession(false) == null) {
+//		synchronized (this) 
+		{
+			// get the old session or create a new session if there is no old session
 			session = request.getSession(true);
-			try {
-				sVars = new SessionVars(getServletContext());
-			} catch (Exception e) {
-				Internals.logStartupError(e);
+
+			// get sVars from the session, or a null if sVars has not been saved in the
+			// session
+			sVars = (SessionVars) session.getAttribute(SESSIONATTRIBUTE);
+
+			if (sVars == null) {
+				try {
+					sVars = new SessionVars(getServletContext());
+				} catch (Exception e) {
+					Internals.logStartupError(e);
+				}
+				// save sVars in the session variables
+				session.setAttribute(SESSIONATTRIBUTE, sVars);
 			}
-			// let sVars persist in the session
-			session.setAttribute(SESSIONATTRIBUTE, sVars);
-		} else
-			session = request.getSession(true);
-
-		// get sVars from the session
-		sVars = (SessionVars) session.getAttribute(SESSIONATTRIBUTE);
+		}
 		sVars.request = request;
 		sVars.response = response;
 
@@ -68,7 +74,7 @@ public class HandleRequest extends HttpServlet {
 			firstTime = false;
 			try {
 				// checks xml file available, use the test to initialize the login form
-				login = sVars.getLoginForm();
+				sVars.getLoginForm();
 				// checks access to the database
 				sVars.connection.getConnection();
 			} catch (Exception e) {
@@ -129,6 +135,13 @@ public class HandleRequest extends HttpServlet {
 		// if the user is not logged in or the input did not have an id for the
 		// application to run
 		if (!sVars.isLoggedIn() || sf == null) {
+			SmartForm login = null;
+			try {
+				login = sVars.getLoginForm();
+			} catch (Exception e) {
+				// should have been caught when the servlet first ran
+				Internals.logStartupError(e);
+			}
 			processInput(login, sVars);
 			sVars.threadCount--;
 			return;
