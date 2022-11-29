@@ -16,11 +16,13 @@ public class MyConnection {
 
 	BasicDataSource basicDataSource = null;
 	SessionVars sVars = null;
+	String dbName = null;
 
 	// create a BasicDataSource connection pool to the dbName database
 	protected MyConnection(SessionVars sVars, String dbName) throws Exception {
 		this.sVars = sVars;
-		createBasicDataSource(dbName);
+		this.dbName = dbName;
+		//createBasicDataSource(dbName);
 	}
 
 	/**
@@ -46,6 +48,8 @@ public class MyConnection {
 	}
 
 	public Connection getConnection() throws Exception {
+		if (basicDataSource == null)
+			createBasicDataSource(dbName);
 		return basicDataSource.getConnection();
 	}
 
