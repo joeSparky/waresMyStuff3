@@ -243,11 +243,14 @@ public class MyStatementTest
 			if (titles.size() != 3)
 				fail("expected size of 3, got " + titles.size());
 
-			if (!titles.contains((FIRSTTABLENAME + "1").toLowerCase()))
+			if (!titles.contains((FIRSTTABLENAME + "1")))
+//					.toLowerCase()))
 				fail("could not find " + FIRSTTABLENAME + "1");
-			if (!titles.contains((FIRSTTABLENAME + "2").toLowerCase()))
+			if (!titles.contains((FIRSTTABLENAME + "2")))
+//					.toLowerCase()))
 				fail("could not find " + FIRSTTABLENAME + "2");
-			if (!titles.contains((FIRSTTABLENAME + "3").toLowerCase()))
+			if (!titles.contains((FIRSTTABLENAME + "3")))
+//					.toLowerCase()))
 				fail("could not find " + FIRSTTABLENAME + "3");
 		} finally {
 			if (ms != null)

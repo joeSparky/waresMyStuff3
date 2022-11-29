@@ -420,6 +420,11 @@ SessionVars sVars = null;
 					int partId = -1;
 					if (rs.next()) {
 						partId = rs.getInt(1);
+					} else {
+						rs.close();
+						st.close();
+						con.close();
+						break;
 					}
 					rs.close();
 					st.close();
@@ -428,8 +433,8 @@ SessionVars sVars = null;
 					break;
 				}
 			}
-			if (!part.isLoaded())
-				fail("part not found");
+//			if (!part.isLoaded())
+//				fail("part not found");
 
 			for (fmd.row = 0; fmd.row < fmd.getNumberOfRows(); fmd.row++) {
 				// ignore the company in the first column
